@@ -25,6 +25,8 @@ public class ReceiptGenerator(AppDbContext db, BlobServiceClient blob, ILogger<R
         var order = await _db.Orders.FindAsync(evt.OrderId);
         if (order is null) { _log.LogWarning("Order {OrderId} not found", evt.OrderId); return; }
 
+        order.MarkPaid();
+
         await _db.SaveChangesAsync();
 
         var container = _blob.GetBlobContainerClient("receipts");
